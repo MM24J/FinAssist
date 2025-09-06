@@ -84,13 +84,17 @@ def _search(query: str, k=3) -> List[Tuple[str, float]]:
 def _extract_bullets(context: str):
     lines = [ln.strip() for ln in context.splitlines()]
 
-    # Only keep real advice lines (starting with "-" or "•"), skip markdown headings
     bullets = []
     for ln in lines:
-        if ln.startswith(("-", "•")):   # bullet point
+        # Skip empty lines and headings
+        if not ln or ln.startswith("#"):
+            continue
+        # Capture lines that look like advice (start with dash, bullet, or plain short text)
+        if ln.startswith(("-", "•")):
             bullets.append(ln.lstrip("-• ").strip())
+        elif len(ln.split()) > 2 and not ln.startswith("##"):
+            bullets.append(ln.strip())
     return bullets
-
 
 def _keywordize(text: str):
     return set(re.findall(r"[a-zA-Z]{3,}", text.lower()))
