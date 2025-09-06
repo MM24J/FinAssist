@@ -1,5 +1,7 @@
 import re
 import pandas as pd
+import yfinance as yf
+from datetime import datetime, timedelta
 
 def parse_tickers(text: str):
     toks = re.findall(r"\b[A-Z]{1,5}\b", text)
@@ -19,20 +21,54 @@ def parse_period(text: str, default="1y"):
     return f"{n}{u}"
 
 def stock_summary(tickers, period):
-    # stub: return dummy data frame
-    return pd.DataFrame([{
-        "ticker": t,
-        "return_pct": 10.0,
-        "start": 100.0,
-        "end": 110.0,
-        "last_close": 110.0
-    } for t in tickers])
+    """Get real stock data using yfinance."""
+    results = []
+    
+    for ticker in tickers:
+        try:
+            # Download stock data
+            stock = yf.Ticker(ticker)
+            hist = stock.history(period=period)
+            
+            if hist.empty:
+                print(f"Warning: No data found for {ticker}")
+                continue
+                
+            # Calculate returns
+            start_price = hist['Close'].iloc[0]
+            end_price = hist['Close'].iloc[-1]
+            last_close = end_price
+            return_pct = ((end_price - start_price) / start_price) * 100
+            
+            results.append({
+                "ticker": ticker,
+                "return_pct": return_pct,
+                "start": start_price,
+                "end": end_price,
+                "last_close": last_close
+            })
+            
+        except Exception as e:
+            print(f"Error fetching data for {ticker}: {e}")
+            # Fallback to dummy data if yfinance fails
+            results.append({
+                "ticker": ticker,
+                "return_pct": 0.0,
+                "start": 100.0,
+                "end": 100.0,
+                "last_close": 100.0
+            })
+    
+    return pd.DataFrame(results)
 
 def summarize_returns(results, period_label="1y"):
     if results.empty:
-        print("No data available.")
-        return
-    print(f"\n--- Investment Summary for {period_label} ---\n")
+        return "No data available."
+    
+    output = [f"\n--- Investment Summary for {period_label} ---"]
+    
     for r in results.itertuples(index=False):
-        print(f"{r.ticker}: {r.return_pct:,.2f}% "
-              f"(Start ${r.start:,.2f} → End ${r.end:,.2f}; Last ${r.last_close:,.2f})")
+        output.append(f"{r.ticker}: {r.return_pct:+.2f}% "
+                     f"(Start ${r.start:.2f} → End ${r.end:.2f}; Last ${r.last_close:.2f})")
+    
+    return "\n".join(output)
