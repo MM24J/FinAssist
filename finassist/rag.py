@@ -83,16 +83,12 @@ def _search(query: str, k=3) -> List[Tuple[str, float]]:
 # Answer construction
 def _extract_bullets(context: str):
     lines = [ln.strip() for ln in context.splitlines()]
+
+    # Only keep real advice lines (starting with "-" or "•"), skip markdown headings
     bullets = []
     for ln in lines:
-        if not ln:
-            continue
-        if ln.startswith(("-", "•", "*")):
-            bullets.append(ln.lstrip("-•* ").strip())
-        else:
-            # keep any short standalone line (could be advice phrased as sentence)
-            if len(ln.split()) <= 12:
-                bullets.append(ln.strip())
+        if ln.startswith(("-", "•")):   # bullet point
+            bullets.append(ln.lstrip("-• ").strip())
     return bullets
 
 
