@@ -82,20 +82,23 @@ def _search(query: str, k=3) -> List[Tuple[str, float]]:
 
 # Answer construction
 def _extract_bullets(context: str):
+    """Extract all advice-style lines from the KB markdown."""
     lines = [ln.strip() for ln in context.splitlines()]
 
     bullets = []
     for ln in lines:
-        # Skip headings
+        # Skip headings like ## Something
         if not ln or ln.startswith("#"):
             continue
-        # Keep advice lines
+
+        # Capture bullet points
         if ln.startswith(("-", "•")):
             bullets.append(ln.lstrip("-• ").strip())
         else:
-            # Also include standalone sentences under headings
+            # Capture plain sentences (non-heading, non-empty)
             if len(ln.split()) > 3:  
                 bullets.append(ln)
+
     return bullets
 
 def _keywordize(text: str):
