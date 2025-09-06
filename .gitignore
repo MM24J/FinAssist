@@ -1,1 +1,9 @@
+# Ignore Python caches
+__pycache__/
+*.pyc
 
+# Ignore notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore model artifacts
+kb/embeddings.pkl
