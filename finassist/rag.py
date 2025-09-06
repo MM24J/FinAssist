@@ -118,28 +118,49 @@ def _dollar_examples(line: str, q: str):
             return line + " (e.g., bundles/auto-pay often save 5-15%, e.g., $5-$15)."
     return line
 
+def _filter_bullets_by_keywords(bullets: list[str], q_terms: set, boost: set):
+    """
+    Keep bullets that overlap with boost terms (like 'internet', 'restaurant')
+    OR with the general query terms.
+    But if that leaves us with fewer than 2 bullets, fall back to all bullets.
+    """
+    if not boost:
+        return bullets
+
+    filtered = []
+    for ln in bullets:
+        lw = set(re.findall(r"[a-zA-Z]{3,}", ln.lower()))
+        if (lw & boost) or (lw & q_terms):
+            filtered.append(ln)
+
+    # Don’t over-filter: keep at least 2 bullets
+    if len(filtered) < 2:
+        return bullets  
+
+    return filtered
+
 def _make_answer(question: str, context: str, k_keep=5):
     q_terms, boost = _q_terms(question)
     bullets = _extract_bullets(context)
 
-    # fallback to raw paragraph if no bullets
+    # Fallback to raw text if no bullets found
     if not bullets:
         para = context.split("\n\n")[0].strip()
-        return f"**Answer:** {question.strip()}\n{para[:600]}\n\n_Source: FinAssist KB_"
+        return f"**Answer:** {question.strip()}\n{para[:600]}...\n\n_Source: FinAssist KB_"
 
-    # keep only relevant bullets
-    bullets = _filter_bullets_by_keywords(bullets, q_terms, boost)
+    # Apply keyword filter, but don’t drop everything
+    filtered = _filter_bullets_by_keywords(bullets, q_terms, boost)
+    if not filtered:  
+        filtered = bullets  
 
-    # if filtering killed everything, fall back to original bullets
-    if not bullets:
-        bullets = _extract_bullets(context)
-
+    # Score and rank
     scored = sorted(
-        ((ln, _score_line(ln, q_terms, boost)) for ln in bullets),
+        ((ln, _score_line(ln, q_terms, boost)) for ln in filtered),
         key=lambda t: t[1],
         reverse=True,
     )
 
+    # Deduplicate & keep top N
     seen, picked = set(), []
     for ln, _ in scored:
         key = ln.lower()
@@ -150,9 +171,10 @@ def _make_answer(question: str, context: str, k_keep=5):
         if len(picked) >= k_keep:
             break
 
-    if not picked:  # last resort fallback
-        return f"**Answer:** {question.strip()}\n{context[:600]}\n\n_Source: FinAssist KB_"
+    if not picked:  # absolute fallback
+        return f"**Answer:** {question.strip()}\n(context found but no clean bullets)\n\n_Source: FinAssist KB_"
 
+    # Format final output
     out = [f"**Answer:** {question.strip()}"]
     out += [f"• {p}" for p in picked]
     out.append("\n_Source: FinAssist KB_")
