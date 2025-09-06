@@ -121,17 +121,25 @@ def _dollar_examples(line: str, q: str):
 def _make_answer(question: str, context: str, k_keep=5):
     q_terms, boost = _q_terms(question)
     bullets = _extract_bullets(context)
-    
+
+    # fallback to raw paragraph if no bullets
     if not bullets:
         para = context.split("\n\n")[0].strip()
-        return para[:600] + ("..." if len(para) > 600 else "")
-    
+        return f"**Answer:** {question.strip()}\n{para[:600]}\n\n_Source: FinAssist KB_"
+
+    # keep only relevant bullets
+    bullets = _filter_bullets_by_keywords(bullets, q_terms, boost)
+
+    # if filtering killed everything, fall back to original bullets
+    if not bullets:
+        bullets = _extract_bullets(context)
+
     scored = sorted(
         ((ln, _score_line(ln, q_terms, boost)) for ln in bullets),
         key=lambda t: t[1],
-        reverse = True,
-    )   
-    
+        reverse=True,
+    )
+
     seen, picked = set(), []
     for ln, _ in scored:
         key = ln.lower()
@@ -141,11 +149,15 @@ def _make_answer(question: str, context: str, k_keep=5):
         picked.append(_dollar_examples(ln, question))
         if len(picked) >= k_keep:
             break
-        
+
+    if not picked:  # last resort fallback
+        return f"**Answer:** {question.strip()}\n{context[:600]}\n\n_Source: FinAssist KB_"
+
     out = [f"**Answer:** {question.strip()}"]
     out += [f"• {p}" for p in picked]
     out.append("\n_Source: FinAssist KB_")
     return "\n".join(out)
+
 
 # Public API
 def rag_answer(question: str, k: int=3) -> str:
