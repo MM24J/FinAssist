@@ -142,15 +142,16 @@ def _filter_bullets_by_keywords(bullets: list[str], q_terms: set, boost: set):
 def _make_answer(question: str, context: str, k_keep=5):
     q_terms, boost = _q_terms(question)
     bullets = _extract_bullets(context)
+    print("DEBUG bullets:", bullets)   # 👈 Debug
 
-    # Fallback to raw text if no bullets found
     if not bullets:
         para = context.split("\n\n")[0].strip()
         return f"**Answer:** {question.strip()}\n{para[:600]}...\n\n_Source: FinAssist KB_"
 
-    # Apply keyword filter, but don’t drop everything
     filtered = _filter_bullets_by_keywords(bullets, q_terms, boost)
-    if not filtered:  
+    print("DEBUG filtered:", filtered)  # 👈 Debug
+
+    if not filtered:
         filtered = bullets  
 
     # Score and rank
@@ -179,6 +180,7 @@ def _make_answer(question: str, context: str, k_keep=5):
     out += [f"• {p}" for p in picked]
     out.append("\n_Source: FinAssist KB_")
     return "\n".join(out)
+
 
 
 # Public API
