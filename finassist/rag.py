@@ -82,24 +82,24 @@ def _search(query: str, k=3) -> List[Tuple[str, float]]:
 
 # Answer construction
 def _extract_bullets(context: str):
-    """Extract all advice-style lines from the KB markdown."""
-    lines = [ln.strip() for ln in context.splitlines()]
-
+    """Extract all non-heading lines (bullets + standalone advice) from the KB markdown."""
     bullets = []
-    for ln in lines:
-        # Skip headings like ## Something
-        if not ln or ln.startswith("#"):
+    for ln in context.splitlines():
+        ln = ln.strip()
+        if not ln:
             continue
-
-        # Capture bullet points
+        # skip headings like # or ##
+        if ln.startswith("#"):
+            continue
+        # keep bullets
         if ln.startswith(("-", "•")):
             bullets.append(ln.lstrip("-• ").strip())
         else:
-            # Capture plain sentences (non-heading, non-empty)
-            if len(ln.split()) > 3:  
+            # also keep plain advice sentences (not headings)
+            if len(ln.split()) > 3:  # at least 4 words
                 bullets.append(ln)
-
     return bullets
+
 
 def _keywordize(text: str):
     return set(re.findall(r"[a-zA-Z]{3,}", text.lower()))
@@ -158,7 +158,7 @@ def _filter_bullets_by_keywords(bullets: list[str], q_terms: set, boost: set):
 def _make_answer(question: str, context: str, k_keep=5):
     q_terms, boost = _q_terms(question)
     bullets = _extract_bullets(context)
-    print("DEBUG bullets:", bullets)   # 👈 Debug
+    print("DEBUG all bullets:", bullets[:10])   # 👈 Debug
 
     if not bullets:
         para = context.split("\n\n")[0].strip()
