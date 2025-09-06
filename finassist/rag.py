@@ -86,14 +86,16 @@ def _extract_bullets(context: str):
 
     bullets = []
     for ln in lines:
-        # Skip empty lines and headings
+        # Skip headings
         if not ln or ln.startswith("#"):
             continue
-        # Capture lines that look like advice (start with dash, bullet, or plain short text)
+        # Keep advice lines
         if ln.startswith(("-", "•")):
             bullets.append(ln.lstrip("-• ").strip())
-        elif len(ln.split()) > 2 and not ln.startswith("##"):
-            bullets.append(ln.strip())
+        else:
+            # Also include standalone sentences under headings
+            if len(ln.split()) > 3:  
+                bullets.append(ln)
     return bullets
 
 def _keywordize(text: str):
