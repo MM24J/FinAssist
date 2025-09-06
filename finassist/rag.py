@@ -83,7 +83,18 @@ def _search(query: str, k=3) -> List[Tuple[str, float]]:
 # Answer construction
 def _extract_bullets(context: str):
     lines = [ln.strip() for ln in context.splitlines()]
-    return [ln.lstrip("-• ").strip() for ln in lines if ln and (ln.startswith(("-", ".")) or len(ln) <= 120)]
+    bullets = []
+    for ln in lines:
+        if not ln:
+            continue
+        if ln.startswith(("-", "•", "*")):
+            bullets.append(ln.lstrip("-•* ").strip())
+        else:
+            # keep any short standalone line (could be advice phrased as sentence)
+            if len(ln.split()) <= 12:
+                bullets.append(ln.strip())
+    return bullets
+
 
 def _keywordize(text: str):
     return set(re.findall(r"[a-zA-Z]{3,}", text.lower()))
