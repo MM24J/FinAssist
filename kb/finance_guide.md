@@ -1,5 +1,3 @@
-# Create knowledge base
-
 ## 50/30/20 Rule
 Allocate 50% needs (rent, utilities), 30% wants (restaurants, entertainment), 20% savings/debt payoff.
 
