@@ -98,7 +98,7 @@ def _q_terms(q: str):
     return terms, boost
 
 def _score_line(line: str, qterms: set, boost: set):
-    lw = set(re.finall(r"[a-zA-Z]{3,}", line.lower()))
+    lw = set(re.findall(r"[a-zA-Z]{3,}", line.lower()))
     base = len(lw & qterms)
     b = 1.0 if (lw & boost) else 0.0
     length_bonus = 0.2 if len(line) <= 100 else 0.0
