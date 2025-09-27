@@ -12,7 +12,7 @@ The application is deployed using Gradio with a web interface accessible at 'app
 ### Sample Interactions
 
 **Financial Advice (RAG System):**
-
+```
 User: "How can I lower my restaurant bill?"
 
 FinAssist:
