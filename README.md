@@ -10,3 +10,9 @@
 The application is deployed using Gradio with a web interface accessible at 'app.py'.
 
 ### Sample Interactions
+
+**Financial Advice (RAG System):**
+
+User: "How can I reduce restaurant spending?"
+FinAssist:
+
