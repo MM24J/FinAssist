@@ -28,9 +28,9 @@ FinAssist:
 • Groceries up + dining down → home cooking trend; check waste/spoilage.
 
 Source: FinAssist KB
-
+```
 **Budget Analysis (Real Data):**
-
+```
 User: "Show me my top 3 over-budget categories in 2019-09"
 
 FinAssist:
@@ -52,9 +52,9 @@ Top 3 under-budget categories:
 • Groceries: $-160.76 (Actual $139.24 vs Budget $300.00)
 
 • Music: $-89.31 (Actual $10.69 vs Budget $100.00)
-
+```
 **Investment Tracking (Live Data):**
-
+```
 User: "Compare TSLA vs SPY over 6m"
 
 --- Investment Summary for 6mo ---
