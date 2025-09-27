@@ -15,10 +15,14 @@ The application is deployed using Gradio with a web interface accessible at 'app
 
 User: "How can I lower my restaurant bill?"
 FinAssist:
+
 • Set a weekly dining cap and track it. (e.g., set a weekly dining cap of $40-60 and track spend).
 • Meal prep 2 lunches per week to cut impulse orders.
+
 • Move coffee/fast food into a shared "Dining Out" cap. (e.g., set a weekly dining cap of $40-60 and track spend).
+
 • Groceries up + dining up → overbuying & eating out. Plan meals, shop with a list.
+
 • Groceries up + dining down → home cooking trend; check waste/spoilage.
 
 Source: FinAssist KB
