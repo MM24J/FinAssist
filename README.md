@@ -14,6 +14,7 @@ The application is deployed using Gradio with a web interface accessible at 'app
 **Financial Advice (RAG System):**
 
 User: "How can I lower my restaurant bill?"
+
 FinAssist:
 
 • Set a weekly dining cap and track it. (e.g., set a weekly dining cap of $40-60 and track spend).
@@ -31,7 +32,9 @@ Source: FinAssist KB
 **Budget Analysis (Real Data):**
 
 User: "Show me my top 3 over-budget categories in 2019-09"
+
 FinAssist:
+
 --- Budget Summary for September 2019 ---
 
 Top 3 over-budget categories:
@@ -51,7 +54,8 @@ Top 3 under-budget categories:
 • Music: $-89.31 (Actual $10.69 vs Budget $100.00)
 
 **Investment Tracking (Live Data):**
-User: "Compare TSLA vs SPY over 6m
+
+User: "Compare TSLA vs SPY over 6m"
 
 --- Investment Summary for 6mo ---
 
