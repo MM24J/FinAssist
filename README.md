@@ -52,6 +52,9 @@ Top 3 under-budget categories:
 
 **Investment Tracking (Live Data):**
 User: "Compare TSLA vs SPY over 6m
+
 --- Investment Summary for 6mo ---
+
 TSLA: +61.24% (Start $273.13 → End $440.40; Last $440.40)
+
 SPY: +17.38% (Start $563.85 → End $661.82; Last $661.82)
